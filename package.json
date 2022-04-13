@@ -1,0 +1,21 @@
+{
+  "name": "com.unityderek.outline-feature",
+  "version": "1.0.0",
+  "displayName": "Outline Feature",
+  "description": "This is a simple outline feature that is originally from the Unity Reflect Viewer template.",
+  "unity": "2019.3",
+  "dependencies": {
+    "com.unity.reflect": "2.0.0",
+    "com.unity.inputsystem": "1.3.0"
+  },
+  "keywords": [
+    "Outline",
+    "Reflect",
+    "PiXYZ"
+  ],
+  "author": {
+    "name": "Derek Lam",
+    "email": "derek.lam@unity3d.com",
+    "url": "https://www.unity3d.com"
+  }
+}
