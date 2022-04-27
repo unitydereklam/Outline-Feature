@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 #if ENABLE_INPUT_SYSTEM
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 #endif
 
@@ -11,14 +13,9 @@ namespace Outline.Feature
     [RequireComponent(typeof(ObjectOutline))]
     public class HighlightObjectSelection : MonoBehaviour
     {
-        private ObjectOutline objectOutline;
+        public UnityEvent<List<GameObject>> OnHighlightedEvent;
 
-        private void Awake()
-        {
-            objectOutline = GetComponent<ObjectOutline>();
-        }
-
-    #if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM
         public void OnSelect(InputValue value)
         {
             if (!value.isPressed)
@@ -29,6 +26,24 @@ namespace Outline.Feature
             if (Mouse.current != null)
             {
                 Vector2 mousePos = Mouse.current.position.ReadValue();
+
+                if (EventSystem.current != null)
+                {
+                    var eventDataCurrentPosition = new PointerEventData(EventSystem.current)
+                    {
+                        position = mousePos
+                    };
+                    
+                    List<RaycastResult> result = new List<RaycastResult>();
+                    EventSystem.current.RaycastAll(eventDataCurrentPosition, result);
+
+                    if (result.Count > 0)
+                    {
+                        return;
+                    }
+                }
+
+
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(mousePos), out RaycastHit hit))
                 {
                     List<GameObject> listOfHighlightedGameObject = new List<GameObject>();
@@ -59,12 +74,11 @@ namespace Outline.Feature
                     
                     
                     if(listOfHighlightedGameObject.Count == 0) return;
-                    objectOutline?.ChangePalette();
-                    objectOutline?.Outline(listOfHighlightedGameObject);
+                    OnHighlightedEvent?.Invoke(listOfHighlightedGameObject);
                 }
                 else
                 {
-                    objectOutline?.ClearSelection();
+                    OnHighlightedEvent?.Invoke(null);
                 }
             }
         }
